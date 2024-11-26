@@ -4,46 +4,64 @@ function getComputerChoice() {
   return choices[Math.floor(Math.random() * 3)];
 }
 
-function getHumanChoice() {
-  let choice = prompt("Choose between Rock, Paper and Scissors :)");
-
-  if (!["rock", "paper", "scissors"].includes(choice.toLowerCase())) {
-    console.log("Invalid choice :(");
-    getHumanChoice();
-  } else {
-    return choice;
-  }
-}
-
 let computerScore = 0;
 let humanScore = 0;
 
-function playRound(humanChoice, computerChoice) {
-  if (humanChoice === computerChoice) {
-    console.log("It's a tie!");
+function playRound(humanChoice) {
+  const computerChoice = getComputerChoice();
+  const actionCompletedContainer = document.querySelector(".action-completed-container");
+  let actionText = actionCompletedContainer.querySelector("p");
+
+  if (!actionText) {
+    actionText = document.createElement("p");
+    actionCompletedContainer.appendChild(actionText);
+  }
+
+  actionText.style.color = "white";
+  actionText.style.fontSize = "50px";
+
+  if (checkWinner(actionText)) {
     return;
   }
 
-  if ((humanChoice === "rock" && computerChoice === "scissors") || (humanChoice === "paper" && computerChoice === "rock") || (humanChoice === "scissors" && computerChoice === "paper")) {
+  if (humanChoice === computerChoice) {
+    actionText.textContent = "It's a tie!";
+    return;
+  }
+
+  if (
+    (humanChoice === "rock" && computerChoice === "scissors") ||
+    (humanChoice === "paper" && computerChoice === "rock") ||
+    (humanChoice === "scissors" && computerChoice === "paper")
+  ) {
     humanScore++;
-    console.log("Human beats Machine!")
+    actionText.textContent = "Human beats Computer!";
+    updateScore("human", humanScore);
   } else {
     computerScore++;
-    console.log("Machine beats Human!")
+    actionText.textContent = "Computer beats Human!";
+    updateScore("computer", computerScore);
   }
+
+  checkWinner(actionText);
 }
 
 
+function updateScore(scoreId, scoreNum) {
+  const score = document.querySelector("#" + scoreId);
 
-for (let i = 0; i < 5; ++i) {
-  const humanChoice = getHumanChoice();
-  const computerChoice = getComputerChoice();
-
-  console.log("Human choice - " + humanChoice);
-  console.log("Computer choice - " + computerChoice);
-
-  playRound(humanChoice, computerChoice);
+  score.textContent = scoreNum;
 }
 
-alert("Final score: Human " + humanScore + " - Computer " + computerScore);
+function checkWinner(actionText) {
+  if (humanScore === 5) {
+    actionText.innerHTML = "Human won &#127881;";
+    return true;
+  } else if (computerScore === 5) {
+    actionText.innerHTML = "Computer won &#127881;";
 
+    return true;
+  }
+
+  return false;
+}
